@@ -24,7 +24,10 @@ class BossAdapter(var mContext: Context, var mData: ArrayList<HashMap<String, St
     companion object {
         val mCompare: Comparator<in HashMap<String, String>> = Comparator { o1, o2 ->
             if (o2[Constants.STATE] == o1[Constants.STATE]) {
-                Utils.dateToStamp(o1[Constants.BOSS_TIME]!!).toInt() - Utils.dateToStamp(o2[Constants.BOSS_TIME]!!).toInt()
+                (Utils.dateToStamp(o2[Constants.BOSS_TIME]!!) + o1[Constants.BOSS_PERIOD]!!.toFloat() * 60 * 60 * 1000L).toInt() - (Utils.dateToStamp(
+                    o1[Constants.BOSS_TIME]!!
+                ) + o2[Constants.BOSS_PERIOD]!!.toFloat() * 60 * 60 * 1000L).toInt()
+//                Utils.dateToStamp(o2[Constants.BOSS_TIME]!!).toInt()- Utils.dateToStamp(o1[Constants.BOSS_TIME]!!).toInt()
             } else {
                 o2[Constants.STATE]!!.toInt() - o1[Constants.STATE]!!.toInt()
             }
@@ -35,6 +38,7 @@ class BossAdapter(var mContext: Context, var mData: ArrayList<HashMap<String, St
     override fun getView(position: Int, convertView: View?, p2: ViewGroup?): View {
         var viewHolder: ViewHolder
         var view: View
+        var time: Long = Utils.dateToStamp(mData[position][Constants.BOSS_TIME]!!) + (mData[position][Constants.BOSS_PERIOD]!!.toFloat() * 60 * 60 * 1000).toLong()
         if (convertView == null) {
             view = View.inflate(mContext, R.layout.item_layout, null);
             viewHolder = ViewHolder(view)
@@ -44,27 +48,29 @@ class BossAdapter(var mContext: Context, var mData: ArrayList<HashMap<String, St
             viewHolder = view.tag as ViewHolder
         }
         viewHolder.tv_boss_space!!.text = mData[position][Constants.BOSS_SPACE]
+
         viewHolder.tv_boss_time!!.text =
-            Utils.longToStringData(Utils.dateToStamp(mData[position][Constants.BOSS_TIME]!!) + (mData[position][Constants.BOSS_PERIOD]!!.toFloat() * 60 * 60 * 1000).toLong())
-        Log.d(
-            "lylog",
-            " name = " + mData[position][Constants.BOSS_SPACE] + " postion = " + position + " state = " + mData[position][Constants.STATE]
-        )
-        if ("1".equals(mData[position][Constants.STATE])) {
+            Utils.longToStringData(time)
+
+        if ("1" == mData[position][Constants.STATE]) {
             viewHolder.tv_boss_space!!.setTextColor(mContext.getColor(R.color.BLACK))
             viewHolder.tv_boss_time!!.setTextColor(mContext.getColor(R.color.BLACK))
-        } else if("2".equals(mData[position][Constants.STATE])){
+        } else if ("2" == mData[position][Constants.STATE]) {
             viewHolder.tv_boss_space!!.setTextColor(mContext.getColor(R.color.RED))
             viewHolder.tv_boss_time!!.setTextColor(mContext.getColor(R.color.RED))
-        }else{
+        } else {
             viewHolder.tv_boss_space!!.setTextColor(mContext.getColor(R.color.GRAY))
             viewHolder.tv_boss_time!!.setTextColor(mContext.getColor(R.color.GRAY))
         }
 
         viewHolder.bt_update!!.setOnClickListener {
-            mData[position][Constants.BOSS_TIME] = Utils.longToStringData(System.currentTimeMillis())!!
+            if ("妖山一层".equals(mData[position][Constants.BOSS_SPACE])) {
+                mData[position][Constants.BOSS_TIME] = Utils.longToStringData(Utils.getYaoOneBsTime())!!
+            } else {
+                mData[position][Constants.BOSS_TIME] = Utils.longToStringData(System.currentTimeMillis())!!
+
+            }
             mData[position][Constants.STATE] = "1"
-            Log.d("lylog", GsonUtils.toJson(mData))
             notifyDataSetChanged()
         }
         viewHolder.bt_delete!!.setOnClickListener {

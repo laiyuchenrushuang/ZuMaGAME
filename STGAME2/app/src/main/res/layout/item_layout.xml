@@ -9,15 +9,15 @@
             android:id="@+id/tv_boss_space"
             style="@style/textStyle1"
             android:layout_width="0dp"
-            android:layout_height="25dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.8"
             android:gravity="center"
             android:text="地点地点"/>
 
     <TextView
             android:id="@+id/tv_boss_time"
             style="@style/textStyle2"
-            android:layout_height="25dp"
+            android:layout_height="wrap_content"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:gravity="center"

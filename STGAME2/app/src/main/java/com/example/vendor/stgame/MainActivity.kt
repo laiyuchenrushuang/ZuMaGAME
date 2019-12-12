@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        Utils.checkEnableUse(this)
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
             setStatusBarColor(resources.getColor(R.color.greenEyeColor))
         }
@@ -65,11 +66,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun OpenTask() {
-        val pool = Executors.newScheduledThreadPool(2)//启用2个线程
-        val t1 = Task1()
-        // 马上运行，任务消耗3秒。运行结束后等待2秒。【有空余线程时】，再次运行该任务
-        pool.scheduleWithFixedDelay(t1, 0, 2, TimeUnit.SECONDS)
-
+        val pool = Executors.newScheduledThreadPool(1)//启用2个线程
         // 马上运行，任务消耗5秒，运行结束后等待2秒。【有空余线程时】，再次运行该任务
         val t2 = Task2()
         pool.scheduleWithFixedDelay(t2, 0, 2, TimeUnit.SECONDS)
@@ -78,44 +75,32 @@ class MainActivity : AppCompatActivity() {
     inner class Task2 : TimerTask() {
 
         override fun run() {
-            System.out.println("----task2 start--------" + Date().toLocaleString())
+            showLog("Task begin " + mData.size)
             try {
                 Thread.sleep(5000)
-                val currentTime = System.currentTimeMillis()
                 for (index in mData) {
-                    if (Utils.dateToStamp(index[Constants.BOSS_TIME]!!) - currentTime < REMIND_TIME) {
-                        index[Constants.STATE] = "2"
-                        adapter!!.notifyDataSetChanged()
+                    if (index[Constants.STATE] != "0") {
+                        if ((Utils.dateToStamp(index[Constants.BOSS_TIME]!!) + index[Constants.BOSS_PERIOD]!!.toFloat() * 60 * 60 * 1000).toLong() - Utils.getCurrentTimeL() > 0 && Utils.dateToStamp(index[Constants.BOSS_TIME]!!) + (index[Constants.BOSS_PERIOD]!!.toFloat() * 60 * 60 * 1000).toLong() - Utils.getCurrentTimeL() < REMIND_TIME) {
+                            index[Constants.STATE] = "2"
+                            runOnUiThread { adapter!!.notifyDataSetChanged() }
+
+                        } else if ((Utils.dateToStamp(index[Constants.BOSS_TIME]!!) + index[Constants.BOSS_PERIOD]!!.toFloat() * 60 * 60 * 1000).toLong() - Utils.getCurrentTimeL() < 0) {
+                            if ("妖山一层" != index[Constants.BOSS_SPACE]) {
+                                index[Constants.STATE] = "0"
+                                runOnUiThread {
+                                    adapter!!.notifyDataSetChanged()
+                                }
+                            }
+                        }
                     }
                 }
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
 
-            System.out.println("----5s later, task2 end--------" + Date().toLocaleString())
         }
     }
 
-    inner class Task1 : TimerTask() {
-
-        override fun run() {
-            System.out.println("----task2 start--------" + Date().toLocaleString())
-            try {
-                Thread.sleep(3000)
-                val currentTime = System.currentTimeMillis()
-                for (index in mData) {
-                    if (Utils.dateToStamp(index[Constants.BOSS_TIME]!!) - currentTime < REMIND_TIME) {
-                        index[Constants.STATE] = "2"
-                        adapter!!.notifyDataSetChanged()
-                    }
-                }
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
-            }
-
-            System.out.println("----5s later, task2 end--------" + Date().toLocaleString())
-        }
-    }
 
     private fun showLog(msg: String) {
         Log.d("[lylog] -->>", msg)
@@ -148,11 +133,23 @@ class MainActivity : AppCompatActivity() {
                 showToast("请完善信息在提交")
                 return@setOnClickListener
             }
+            if ("219" == space.text.toString() && "219" == period.text.toString()) {
+                showToast("解除时间控制成功")
+                SharedPreferencesUnitls.setParam(this, Constants.ENABLE, "2099-12-12 11:40:00")
+                return@setOnClickListener
+            }
             val map = HashMap<String, String>()
             map[Constants.BOSS_PERIOD] = period.text.toString()
             map[Constants.BOSS_SPACE] = space.text.toString()
             map[Constants.BOSS_TIME] = picker.text.toString()
-            map[Constants.STATE] = "1"
+            if (Utils.dateToStamp(picker.text.toString()) + period.text.toString().toFloat() * 60 * 60 * 1000L - Utils.getCurrentTimeL() < 0) {
+                map[Constants.STATE] = "0"
+            } else if (Utils.dateToStamp(picker.text.toString()) + period.text.toString().toFloat() * 60 * 60 * 1000L - Utils.getCurrentTimeL() < REMIND_TIME) {
+                map[Constants.STATE] = "2"
+            } else {
+                map[Constants.STATE] = "1"
+            }
+
             for (index in mData) {
                 if (map[Constants.BOSS_SPACE].equals(index[Constants.BOSS_SPACE])) {
                     mData.remove(index)
@@ -169,7 +166,7 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    private fun showToast(s: String) {
+    fun showToast(s: String) {
         Toast.makeText(this, s, Toast.LENGTH_SHORT).show()
     }
 
@@ -190,14 +187,15 @@ class MainActivity : AppCompatActivity() {
             // 绑定监听器
             TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
                 var minStr = minute.toString()
+                var secondStr = Utils.longToStringData(System.currentTimeMillis())
+                var seconds = if (secondStr!!.contains(":")) secondStr.split(":")[2] else "00"
+
                 if (minute < 10) {
                     minStr = "0$minute"
                 }
-                tv.text = "$hourOfDay:$minStr:00"
+                tv.text = "$hourOfDay:$minStr:$seconds"
             }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true
-        )// 设置初始时间
-            // true表示采用24制
-            .show()
+        ).show()
     }
 
     private fun initData() {
@@ -211,12 +209,36 @@ class MainActivity : AppCompatActivity() {
         mData.add(map)
 
         val map1 = HashMap<String, String>()
-        map1[Constants.BOSS_SPACE] = "地下"
+        map1[Constants.BOSS_SPACE] = "地下一层"
         map1[Constants.BOSS_PERIOD] = "2"
         map1[Constants.BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis() - map1[Constants.BOSS_PERIOD]!!.toLong() * 60 * 60 * 1000)!!
         map1[Constants.STATE] = "0"
         mData.add(map1)
+
+        val map1_2 = HashMap<String, String>()
+        map1_2[Constants.BOSS_SPACE] = "地下二层"
+        map1_2[Constants.BOSS_PERIOD] = "2"
+        map1_2[Constants.BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis() - map1_2[Constants.BOSS_PERIOD]!!.toLong() * 60 * 60 * 1000)!!
+        map1_2[Constants.STATE] = "0"
+        mData.add(map1_2)
+
+        val map1_3 = HashMap<String, String>()
+        map1_3[Constants.BOSS_SPACE] = "地下三层"
+        map1_3[Constants.BOSS_PERIOD] = "2"
+        map1_3[Constants.BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis() - map1_3[Constants.BOSS_PERIOD]!!.toLong() * 60 * 60 * 1000)!!
+        map1_3[Constants.STATE] = "0"
+        mData.add(map1_3)
+
+        val map1_4 = HashMap<String, String>()
+        map1_4[Constants.BOSS_SPACE] = "地下三BOSS"
+        map1_4[Constants.BOSS_PERIOD] = "2"
+        map1_4[Constants.BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis() - map1_4[Constants.BOSS_PERIOD]!!.toLong() * 60 * 60 * 1000)!!
+        map1_4[Constants.STATE] = "0"
+        mData.add(map1_4)
 
         val map2 = HashMap<String, String>()
         map2[Constants.BOSS_SPACE] = "雪域"
@@ -227,7 +249,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map2)
 
         val map3 = HashMap<String, String>()
-        map3[Constants.BOSS_SPACE] = "魔窟"
+        map3[Constants.BOSS_SPACE] = "石窟BOSS"
         map3[Constants.BOSS_PERIOD] = "2"
         map3[Constants.BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis() - map3[Constants.BOSS_PERIOD]!!.toLong() * 60 * 60 * 1000)!!
@@ -235,12 +257,44 @@ class MainActivity : AppCompatActivity() {
         mData.add(map3)
 
         val map4 = HashMap<String, String>()
-        map4[Constants.BOSS_SPACE] = "海底"
+        map4[Constants.BOSS_SPACE] = "海底二层"
         map4[Constants.BOSS_PERIOD] = "2"
         map4[Constants.BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis() - map4[Constants.BOSS_PERIOD]!!.toLong() * 60 * 60 * 1000)!!
         map4[Constants.STATE] = "0"
         mData.add(map4)
+
+        val map4_1 = HashMap<String, String>()
+        map4_1[Constants.BOSS_SPACE] = "海底三层"
+        map4_1[Constants.BOSS_PERIOD] = "2"
+        map4_1[Constants.BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis() - map4_1[Constants.BOSS_PERIOD]!!.toLong() * 60 * 60 * 1000)!!
+        map4_1[Constants.STATE] = "0"
+        mData.add(map4_1)
+
+        val map4_2 = HashMap<String, String>()
+        map4_2[Constants.BOSS_SPACE] = "海底四层"
+        map4_2[Constants.BOSS_PERIOD] = "2"
+        map4_2[Constants.BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis() - map4_2[Constants.BOSS_PERIOD]!!.toLong() * 60 * 60 * 1000)!!
+        map4_2[Constants.STATE] = "0"
+        mData.add(map4_2)
+
+        val map4_3 = HashMap<String, String>()
+        map4_3[Constants.BOSS_SPACE] = "海底秘境"
+        map4_3[Constants.BOSS_PERIOD] = "2"
+        map4_3[Constants.BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis() - map4_3[Constants.BOSS_PERIOD]!!.toLong() * 60 * 60 * 1000)!!
+        map4_3[Constants.STATE] = "0"
+        mData.add(map4_3)
+
+        val map4_4 = HashMap<String, String>()
+        map4_4[Constants.BOSS_SPACE] = "海魔BOSS"
+        map4_4[Constants.BOSS_PERIOD] = "2"
+        map4_4[Constants.BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis() - map4_4[Constants.BOSS_PERIOD]!!.toLong() * 60 * 60 * 1000)!!
+        map4_4[Constants.STATE] = "0"
+        mData.add(map4_4)
 
         val map5 = HashMap<String, String>()
         map5[Constants.BOSS_SPACE] = "祖玛"
@@ -251,7 +305,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map5)
 
         val map6 = HashMap<String, String>()
-        map6[Constants.BOSS_SPACE] = "人鱼"
+        map6[Constants.BOSS_SPACE] = "人鱼海岛"
         map6[Constants.BOSS_PERIOD] = "1"
         map6[Constants.BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis() - map6[Constants.BOSS_PERIOD]!!.toLong() * 60 * 60 * 1000)!!
@@ -259,19 +313,131 @@ class MainActivity : AppCompatActivity() {
         mData.add(map6)
 
         val map7 = HashMap<String, String>()
-        map7[Constants.BOSS_SPACE] = "森林"
+        map7[Constants.BOSS_SPACE] = "森林入口"
         map7[Constants.BOSS_PERIOD] = "2"
         map7[Constants.BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis() - map7[Constants.BOSS_PERIOD]!!.toLong() * 60 * 60 * 1000)!!
         map7[Constants.STATE] = "0"
         mData.add(map7)
 
+        val map7_1 = HashMap<String, String>()
+        map7_1[Constants.BOSS_SPACE] = "森林一层"
+        map7_1[Constants.BOSS_PERIOD] = "2"
+        map7_1[Constants.BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis() - map7_1[Constants.BOSS_PERIOD]!!.toLong() * 60 * 60 * 1000)!!
+        map7_1[Constants.STATE] = "0"
+        mData.add(map7_1)
+
+        val map7_2 = HashMap<String, String>()
+        map7_2[Constants.BOSS_SPACE] = "森林二层"
+        map7_2[Constants.BOSS_PERIOD] = "2"
+        map7_2[Constants.BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis() - map7_2[Constants.BOSS_PERIOD]!!.toLong() * 60 * 60 * 1000)!!
+        map7_2[Constants.STATE] = "0"
+        mData.add(map7_2)
+
+        val map7_3 = HashMap<String, String>()
+        map7_3[Constants.BOSS_SPACE] = "森林三层"
+        map7_3[Constants.BOSS_PERIOD] = "2"
+        map7_3[Constants.BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis() - map7_3[Constants.BOSS_PERIOD]!!.toLong() * 60 * 60 * 1000)!!
+        map7_3[Constants.STATE] = "0"
+        mData.add(map7_3)
+
+        val map7_4 = HashMap<String, String>()
+        map7_4[Constants.BOSS_SPACE] = "森林三BOSS"
+        map7_4[Constants.BOSS_PERIOD] = "2"
+        map7_4[Constants.BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis() - map7_4[Constants.BOSS_PERIOD]!!.toLong() * 60 * 60 * 1000)!!
+        map7_4[Constants.STATE] = "0"
+        mData.add(map7_4)
+
+        val map7_5 = HashMap<String, String>()
+        map7_5[Constants.BOSS_SPACE] = "森林精英"
+        map7_5[Constants.BOSS_PERIOD] = "0.5"
+        map7_5[Constants.BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis() - (map7_5[Constants.BOSS_PERIOD]!!.toFloat() * 60 * 60 * 1000).toLong())!!
+        map7_5[Constants.STATE] = "0"
+        mData.add(map7_5)
+
         val map8 = HashMap<String, String>()
-        map8[Constants.BOSS_SPACE] = "幽冥"
+        map8[Constants.BOSS_SPACE] = "幽冥三精英"
         map8[Constants.BOSS_PERIOD] = "0.5"
         map8[Constants.BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis() - (map8[Constants.BOSS_PERIOD]!!.toFloat() * 60 * 60 * 1000).toLong())!!
         map8[Constants.STATE] = "0"
         mData.add(map8)
+
+        val map8_1 = HashMap<String, String>()
+        map8_1[Constants.BOSS_SPACE] = "幽冥一层"
+        map8_1[Constants.BOSS_PERIOD] = "2"
+        map8_1[Constants.BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis() - (map8_1[Constants.BOSS_PERIOD]!!.toFloat() * 60 * 60 * 1000).toLong())!!
+        map8_1[Constants.STATE] = "0"
+        mData.add(map8_1)
+
+        val map8_2 = HashMap<String, String>()
+        map8_2[Constants.BOSS_SPACE] = "幽冥二层"
+        map8_2[Constants.BOSS_PERIOD] = "2"
+        map8_2[Constants.BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis() - (map8_2[Constants.BOSS_PERIOD]!!.toFloat() * 60 * 60 * 1000).toLong())!!
+        map8_2[Constants.STATE] = "0"
+        mData.add(map8_2)
+
+        val map8_3 = HashMap<String, String>()
+        map8_3[Constants.BOSS_SPACE] = "幽冥三BOSS"
+        map8_3[Constants.BOSS_PERIOD] = "4"
+        map8_3[Constants.BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis() - (map8_3[Constants.BOSS_PERIOD]!!.toFloat() * 60 * 60 * 1000).toLong())!!
+        map8_3[Constants.STATE] = "0"
+        mData.add(map8_3)
+
+        val map9 = HashMap<String, String>()
+        map9[Constants.BOSS_SPACE] = "圣域"
+        map9[Constants.BOSS_PERIOD] = "" + 43f / 60
+        map9[Constants.BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis() - (map9[Constants.BOSS_PERIOD]!!.toFloat() * 60 * 60 * 1000).toLong())!!
+        map9[Constants.STATE] = "0"
+        mData.add(map9)
+
+        val map10 = HashMap<String, String>()
+        map10[Constants.BOSS_SPACE] = "妖山一层"
+        map10[Constants.BOSS_PERIOD] = "1"
+        map10[Constants.BOSS_TIME] =
+            Utils.longToStringData(Utils.getYaoOneBsTime())!!
+        map10[Constants.STATE] = "1"
+        mData.add(map10)
+
+        val map10_1 = HashMap<String, String>()
+        map10_1[Constants.BOSS_SPACE] = "妖山二层"
+        map10_1[Constants.BOSS_PERIOD] = "2"
+        map10_1[Constants.BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis() - (map10_1[Constants.BOSS_PERIOD]!!.toFloat() * 60 * 60 * 1000).toLong())!!
+        map10_1[Constants.STATE] = "0"
+        mData.add(map10_1)
+
+        val map11 = HashMap<String, String>()
+        map11[Constants.BOSS_SPACE] = "猪洞三层"
+        map11[Constants.BOSS_PERIOD] = "2"
+        map11[Constants.BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis() - (map11[Constants.BOSS_PERIOD]!!.toFloat() * 60 * 60 * 1000).toLong())!!
+        map11[Constants.STATE] = "0"
+        mData.add(map11)
+
+        val map12 = HashMap<String, String>()
+        map12[Constants.BOSS_SPACE] = "藏金阁花"
+        map12[Constants.BOSS_PERIOD] = "" + 20f / 60
+        map12[Constants.BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis() - (map12[Constants.BOSS_PERIOD]!!.toFloat() * 60 * 60 * 1000).toLong())!!
+        map12[Constants.STATE] = "0"
+        mData.add(map12)
+
+        val map12_1 = HashMap<String, String>()
+        map12_1[Constants.BOSS_SPACE] = "藏金阁BOSS"
+        map12_1[Constants.BOSS_PERIOD] = "1"
+        map12_1[Constants.BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis() - (map12_1[Constants.BOSS_PERIOD]!!.toFloat() * 60 * 60 * 1000).toLong())!!
+        map12_1[Constants.STATE] = "0"
+        mData.add(map12_1)
     }
 }

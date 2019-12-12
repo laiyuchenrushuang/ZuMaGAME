@@ -16,7 +16,7 @@
                 style="@style/textStyle4"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="0.8"
                 android:gravity="center"
                 android:text="地点"/>
 
@@ -42,7 +42,8 @@
             android:layout_width="match_parent"
             android:layout_marginTop="10dp"
             android:layout_height="0dp"
-            android:layout_weight="1"></ListView>
+            android:layout_weight="1"
+            android:scrollbars="none"></ListView>
 
     <Button
             android:id="@+id/bt_boss_add_data"

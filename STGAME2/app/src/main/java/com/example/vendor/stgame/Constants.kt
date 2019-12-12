@@ -13,5 +13,6 @@ class Constants {
         var BOSS_TIME = "boss_time" //死亡时间
         var BOSS_PERIOD = "boss_period"
         var STATE = "state"
+        var ENABLE = "LYC"
     }
 }
