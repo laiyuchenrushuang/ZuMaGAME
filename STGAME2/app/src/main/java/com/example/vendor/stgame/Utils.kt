@@ -2,22 +2,17 @@ package com.example.vendor.stgame
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
 import android.os.Process
 import android.util.DisplayMetrics
-import android.view.Display
 import android.view.WindowManager
 
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import android.content.DialogInterface
-import android.graphics.Color
-import android.widget.TextView
 import android.widget.Toast
-import java.lang.reflect.AccessibleObject.setAccessible
-import java.lang.reflect.AccessibleObject.setAccessible
+import com.example.vendor.stgame.Constants.Companion.LIMIT86399
+import com.example.vendor.stgame.Constants.Companion.LIMIT86400
 
 
 /**
@@ -162,19 +157,34 @@ class Utils {
 
         //妖1 每47 min
 
-        fun getYaoOneBsTime(): Long {
-            var time:String?
-            var currentTime = longToStringData(System.currentTimeMillis())
-            var ch = currentTime!!.split(":")[1]  // 分钟
+        fun getYaoOneBsTime(): String {
+            val time: String?
+            val currentTime = TimeUtils.getCurrentTime()
+            val ch = currentTime.split(":")[1]  // 分钟
             if (ch.toInt() in 47..59) {
-                time = longToStringData(System.currentTimeMillis())
-            }else{
-                time = longToStringData(System.currentTimeMillis() - 1 * 60 * 60 * 1000L)
+                if (TimeUtils.String2Int(currentTime) + 1 * 60 * 60 > LIMIT86399) {  //晚上12点后怎么跳时间
+                    time = TimeUtils.Int2String(TimeUtils.String2Int(currentTime) + 1 * 60 * 60 - LIMIT86400)
+                } else {
+                    time = TimeUtils.Int2String(TimeUtils.String2Int(currentTime) + 1 * 60 * 60)
+                }
+
+            } else {
+                time = currentTime
             }
 
-            var h = time!!.split(":")[0]  //
+            val h = time.split(":")[0]  //
             var newTime = "$h:47:00"
-            return dateToStamp(newTime)
+            return newTime
+        } //妖1 每47 min
+
+        fun getBsTime(currentTime :String,period: Float): String {
+            val time: String?
+            if (TimeUtils.String2Int(currentTime) + period * 60 * 60 > LIMIT86399) {  //晚上12点后怎么跳时间
+                time = TimeUtils.Int2String(TimeUtils.String2Int(currentTime) + (period * 60 * 60 - LIMIT86400).toInt())
+            } else {
+                time = TimeUtils.Int2String(TimeUtils.String2Int(currentTime) + (period * 60 * 60).toInt())
+            }
+            return time
         }
     }
 }

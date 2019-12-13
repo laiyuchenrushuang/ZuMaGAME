@@ -2,9 +2,6 @@ package com.example.vendor.stgame
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
-import android.provider.Settings
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
@@ -13,21 +10,13 @@ import android.widget.TextView
 import java.util.*
 
 /**
- * Created by ly on 2019/12/11 10:59
- *
- * Copyright is owned by chengdu haicheng technology
- * co., LTD. The code is only for learning and sharing.
- * It is forbidden to make profits by spreading the code.
  */
-class BossAdapter(var mContext: Context, var mData: ArrayList<HashMap<String, String>>) : BaseAdapter() {
+class BossAdapter(private var mContext: Context, private var mData: ArrayList<HashMap<String, String>>) : BaseAdapter() {
 
     companion object {
         val mCompare: Comparator<in HashMap<String, String>> = Comparator { o1, o2 ->
             if (o2[Constants.STATE] == o1[Constants.STATE]) {
-                (Utils.dateToStamp(o2[Constants.BOSS_TIME]!!) + o1[Constants.BOSS_PERIOD]!!.toFloat() * 60 * 60 * 1000L).toInt() - (Utils.dateToStamp(
-                    o1[Constants.BOSS_TIME]!!
-                ) + o2[Constants.BOSS_PERIOD]!!.toFloat() * 60 * 60 * 1000L).toInt()
-//                Utils.dateToStamp(o2[Constants.BOSS_TIME]!!).toInt()- Utils.dateToStamp(o1[Constants.BOSS_TIME]!!).toInt()
+                TimeUtils.String2Int(o1[Constants.BOSS_TIME]!!)  - TimeUtils.String2Int(o2[Constants.BOSS_TIME]!!)
             } else {
                 o2[Constants.STATE]!!.toInt() - o1[Constants.STATE]!!.toInt()
             }
@@ -36,44 +25,52 @@ class BossAdapter(var mContext: Context, var mData: ArrayList<HashMap<String, St
 
     @SuppressLint("ResourceAsColor")
     override fun getView(position: Int, convertView: View?, p2: ViewGroup?): View {
-        var viewHolder: ViewHolder
-        var view: View
-        var time: Long = Utils.dateToStamp(mData[position][Constants.BOSS_TIME]!!) + (mData[position][Constants.BOSS_PERIOD]!!.toFloat() * 60 * 60 * 1000).toLong()
+        val viewHolder: ViewHolder
+        val view: View
+
         if (convertView == null) {
-            view = View.inflate(mContext, R.layout.item_layout, null);
+            view = View.inflate(mContext, R.layout.item_layout, null)
             viewHolder = ViewHolder(view)
             view.tag = viewHolder
         } else {
             view = convertView
             viewHolder = view.tag as ViewHolder
         }
-        viewHolder.tv_boss_space!!.text = mData[position][Constants.BOSS_SPACE]
+        viewHolder.tvBossSpace!!.text = mData[position][Constants.BOSS_SPACE]
 
-        viewHolder.tv_boss_time!!.text =
-            Utils.longToStringData(time)
+        viewHolder.tvBossTime!!.text =  mData[position][Constants.BOSS_TIME]!!
 
-        if ("1" == mData[position][Constants.STATE]) {
-            viewHolder.tv_boss_space!!.setTextColor(mContext.getColor(R.color.BLACK))
-            viewHolder.tv_boss_time!!.setTextColor(mContext.getColor(R.color.BLACK))
-        } else if ("2" == mData[position][Constants.STATE]) {
-            viewHolder.tv_boss_space!!.setTextColor(mContext.getColor(R.color.RED))
-            viewHolder.tv_boss_time!!.setTextColor(mContext.getColor(R.color.RED))
-        } else {
-            viewHolder.tv_boss_space!!.setTextColor(mContext.getColor(R.color.GRAY))
-            viewHolder.tv_boss_time!!.setTextColor(mContext.getColor(R.color.GRAY))
+        when {
+            "1" == mData[position][Constants.STATE] -> {
+                viewHolder.tvBossSpace!!.setTextColor(mContext.getColor(R.color.BLACK))
+                viewHolder.tvBossTime!!.setTextColor(mContext.getColor(R.color.BLACK))
+            }
+            "2" == mData[position][Constants.STATE] -> {
+                viewHolder.tvBossSpace!!.setTextColor(mContext.getColor(R.color.RED))
+                viewHolder.tvBossTime!!.setTextColor(mContext.getColor(R.color.RED))
+            }
+            else -> {
+                viewHolder.tvBossSpace!!.setTextColor(mContext.getColor(R.color.GRAY))
+                viewHolder.tvBossTime!!.setTextColor(mContext.getColor(R.color.GRAY))
+            }
         }
 
-        viewHolder.bt_update!!.setOnClickListener {
-            if ("妖山一层".equals(mData[position][Constants.BOSS_SPACE])) {
-                mData[position][Constants.BOSS_TIME] = Utils.longToStringData(Utils.getYaoOneBsTime())!!
+        viewHolder.btUpdate!!.setOnClickListener {
+            if ("妖山一层" == mData[position][Constants.BOSS_SPACE]) {
+                mData[position][Constants.BOSS_TIME] =Utils.getYaoOneBsTime()
             } else {
-                mData[position][Constants.BOSS_TIME] = Utils.longToStringData(System.currentTimeMillis())!!
+                mData[position][Constants.BOSS_TIME] = Utils.getBsTime(TimeUtils.getCurrentTime(),mData[position][Constants.BOSS_PERIOD]!!.toFloat())
+                if(TimeUtils.String2Int(TimeUtils.getCurrentTime()) + mData[position][Constants.BOSS_PERIOD]!!.toFloat() * 60 * 60 > Constants.LIMIT86399){
+                    mData[position][Constants.OVER_NUM] = "1"
+                }else{
+                    mData[position][Constants.OVER_NUM] = "0"
+                }
 
             }
             mData[position][Constants.STATE] = "1"
             notifyDataSetChanged()
         }
-        viewHolder.bt_delete!!.setOnClickListener {
+        viewHolder.btDelete!!.setOnClickListener {
             mData.remove(mData[position])
             notifyDataSetChanged()
         }
@@ -93,16 +90,16 @@ class BossAdapter(var mContext: Context, var mData: ArrayList<HashMap<String, St
     }
 
     class ViewHolder(viewItem: View) {
-        var tv_boss_space: TextView? = null
-        var tv_boss_time: TextView? = null
-        var bt_update: Button? = null
-        var bt_delete: Button? = null
+        var tvBossSpace: TextView? = null
+        var tvBossTime: TextView? = null
+        var btUpdate: Button? = null
+        var btDelete: Button? = null
 
         init {
-            tv_boss_space = viewItem.findViewById(R.id.tv_boss_space)
-            tv_boss_time = viewItem.findViewById(R.id.tv_boss_time)
-            bt_update = viewItem.findViewById(R.id.bt_update)
-            bt_delete = viewItem.findViewById(R.id.bt_delete)
+            tvBossSpace = viewItem.findViewById(R.id.tv_boss_space)
+            tvBossTime = viewItem.findViewById(R.id.tv_boss_time)
+            btUpdate = viewItem.findViewById(R.id.bt_update)
+            btDelete = viewItem.findViewById(R.id.bt_delete)
         }
     }
 
