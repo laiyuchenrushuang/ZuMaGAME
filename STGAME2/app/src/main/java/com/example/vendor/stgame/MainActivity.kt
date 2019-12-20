@@ -256,7 +256,7 @@ class MainActivity : AppCompatActivity() {
         DAY = TimeUtils.getDayOfMonth()
 
         val map = HashMap<String, String>()
-        map[BOSS_SPACE] = "暗之"
+        map[BOSS_SPACE] = "暗之陵墓"
         map[BOSS_PERIOD] = "2"
         map[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -264,113 +264,6 @@ class MainActivity : AppCompatActivity() {
         map[OVER_NUM] = "0"
         mData.add(map)
 
-        val map1 = HashMap<String, String>()
-        map1[BOSS_SPACE] = "地下一层"
-        map1[BOSS_PERIOD] = "2"
-        map1[BOSS_TIME] =
-            Utils.longToStringData(System.currentTimeMillis())!!
-        map1[STATE] = "0"
-        map1[OVER_NUM] = "0"
-        mData.add(map1)
-
-        val map1_2 = HashMap<String, String>()
-        map1_2[BOSS_SPACE] = "地下二层"
-        map1_2[BOSS_PERIOD] = "2"
-        map1_2[BOSS_TIME] =
-            Utils.longToStringData(System.currentTimeMillis())!!
-        map1_2[STATE] = "0"
-        map1_2[OVER_NUM] = "0"
-        mData.add(map1_2)
-
-        val map1_3 = HashMap<String, String>()
-        map1_3[BOSS_SPACE] = "地下三层"
-        map1_3[BOSS_PERIOD] = "2"
-        map1_3[BOSS_TIME] =
-            Utils.longToStringData(System.currentTimeMillis())!!
-        map1_3[STATE] = "0"
-        map1_3[OVER_NUM] = "0"
-        mData.add(map1_3)
-
-        val map1_4 = HashMap<String, String>()
-        map1_4[BOSS_SPACE] = "地下三BOSS"
-        map1_4[BOSS_PERIOD] = "2"
-        map1_4[BOSS_TIME] =
-            Utils.longToStringData(System.currentTimeMillis())!!
-        map1_4[STATE] = "0"
-        map1_4[OVER_NUM] = "0"
-        mData.add(map1_4)
-
-        val map2 = HashMap<String, String>()
-        map2[BOSS_SPACE] = "雪域"
-        map2[BOSS_PERIOD] = "2"
-        map2[BOSS_TIME] =
-            Utils.longToStringData(System.currentTimeMillis())!!
-        map2[STATE] = "0"
-        map2[OVER_NUM] = "0"
-        mData.add(map2)
-
-        val map3 = HashMap<String, String>()
-        map3[BOSS_SPACE] = "石窟BOSS"
-        map3[BOSS_PERIOD] = "2"
-        map3[BOSS_TIME] =
-            Utils.longToStringData(System.currentTimeMillis())!!
-        map3[STATE] = "0"
-        map3[OVER_NUM] = "0"
-        mData.add(map3)
-
-        val map4 = HashMap<String, String>()
-        map4[BOSS_SPACE] = "海底二层"
-        map4[BOSS_PERIOD] = "2"
-        map4[BOSS_TIME] =
-            Utils.longToStringData(System.currentTimeMillis())!!
-        map4[STATE] = "0"
-        map4[OVER_NUM] = "0"
-        mData.add(map4)
-
-        val map4_1 = HashMap<String, String>()
-        map4_1[BOSS_SPACE] = "海底三层"
-        map4_1[BOSS_PERIOD] = "2"
-        map4_1[BOSS_TIME] =
-            Utils.longToStringData(System.currentTimeMillis())!!
-        map4_1[STATE] = "0"
-        map4_1[OVER_NUM] = "0"
-        mData.add(map4_1)
-
-        val map4_2 = HashMap<String, String>()
-        map4_2[BOSS_SPACE] = "海底四层"
-        map4_2[BOSS_PERIOD] = "2"
-        map4_2[BOSS_TIME] =
-            Utils.longToStringData(System.currentTimeMillis())!!
-        map4_2[STATE] = "0"
-        map4_2[OVER_NUM] = "0"
-        mData.add(map4_2)
-
-        val map4_3 = HashMap<String, String>()
-        map4_3[BOSS_SPACE] = "海底秘境"
-        map4_3[BOSS_PERIOD] = "2"
-        map4_3[BOSS_TIME] =
-            Utils.longToStringData(System.currentTimeMillis())!!
-        map4_3[STATE] = "0"
-        map4_3[OVER_NUM] = "0"
-        mData.add(map4_3)
-
-        val map4_4 = HashMap<String, String>()
-        map4_4[BOSS_SPACE] = "海魔BOSS"
-        map4_4[BOSS_PERIOD] = "2"
-        map4_4[BOSS_TIME] =
-            Utils.longToStringData(System.currentTimeMillis())!!
-        map4_4[STATE] = "0"
-        map4_4[OVER_NUM] = "0"
-        mData.add(map4_4)
-
-        val map5 = HashMap<String, String>()
-        map5[BOSS_SPACE] = "祖玛"
-        map5[BOSS_PERIOD] = "2"
-        map5[BOSS_TIME] =
-            Utils.longToStringData(System.currentTimeMillis())!!
-        map5[STATE] = "0"
-        map5[OVER_NUM] = "0"
-        mData.add(map5)
 
         val map6 = HashMap<String, String>()
         map6[BOSS_SPACE] = "人鱼海岛"
@@ -380,6 +273,76 @@ class MainActivity : AppCompatActivity() {
         map6[STATE] = "0"
         map6[OVER_NUM] = "0"
         mData.add(map6)
+
+        val map9 = HashMap<String, String>()
+        map9[BOSS_SPACE] = "圣域领地"
+        map9[BOSS_PERIOD] = "" + 43f / 60
+        map9[BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis())!!
+        map9[STATE] = "0"
+        map9[OVER_NUM] = "0"
+        mData.add(map9)
+
+
+
+        val map2 = HashMap<String, String>()
+        map2[BOSS_SPACE] = "雪域BOSS"
+        map2[BOSS_PERIOD] = "3"
+        map2[BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis())!!
+        map2[STATE] = "0"
+        map2[OVER_NUM] = "0"
+        mData.add(map2)
+
+        val map3 = HashMap<String, String>()
+        map3[BOSS_SPACE] = "天魔石窟BOSS"
+        map3[BOSS_PERIOD] = "2"
+        map3[BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis())!!
+        map3[STATE] = "0"
+        map3[OVER_NUM] = "0"
+        mData.add(map3)
+
+
+        val map5 = HashMap<String, String>()
+        map5[BOSS_SPACE] = "祖玛大厅BOSS"
+        map5[BOSS_PERIOD] = "2"
+        map5[BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis())!!
+        map5[STATE] = "0"
+        map5[OVER_NUM] = "0"
+        mData.add(map5)
+
+
+        val map11 = HashMap<String, String>()
+        map11[BOSS_SPACE] = "猪洞三层BOSS"
+        map11[BOSS_PERIOD] = "2"
+        map11[BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis())!!
+        map11[STATE] = "0"
+        map11[OVER_NUM] = "0"
+        mData.add(map11)
+
+
+        val map10_1 = HashMap<String, String>()
+        map10_1[BOSS_SPACE] = "妖山二层BOSS"
+        map10_1[BOSS_PERIOD] = "2"
+        map10_1[BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis())!!
+        map10_1[STATE] = "0"
+        map10_1[OVER_NUM] = "0"
+        mData.add(map10_1)
+
+
+
+        val map7_5 = HashMap<String, String>()
+        map7_5[BOSS_SPACE] = "森林精英"
+        map7_5[BOSS_PERIOD] = "0.5"
+        map7_5[BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis())!!
+        map7_5[STATE] = "0"
+        map7_5[OVER_NUM] = "0"
+        mData.add(map7_5)
 
         val map7 = HashMap<String, String>()
         map7[BOSS_SPACE] = "森林入口"
@@ -418,7 +381,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map7_3)
 
         val map7_4 = HashMap<String, String>()
-        map7_4[BOSS_SPACE] = "森林三BOSS"
+        map7_4[BOSS_SPACE] = "森林三层BOSS"
         map7_4[BOSS_PERIOD] = "2"
         map7_4[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -426,14 +389,87 @@ class MainActivity : AppCompatActivity() {
         map7_4[OVER_NUM] = "0"
         mData.add(map7_4)
 
-        val map7_5 = HashMap<String, String>()
-        map7_5[BOSS_SPACE] = "森林精英"
-        map7_5[BOSS_PERIOD] = "0.5"
-        map7_5[BOSS_TIME] =
+
+        val map4 = HashMap<String, String>()
+        map4[BOSS_SPACE] = "海底二层"
+        map4[BOSS_PERIOD] = "2"
+        map4[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
-        map7_5[STATE] = "0"
-        map7_5[OVER_NUM] = "0"
-        mData.add(map7_5)
+        map4[STATE] = "0"
+        map4[OVER_NUM] = "0"
+        mData.add(map4)
+
+        val map4_1 = HashMap<String, String>()
+        map4_1[BOSS_SPACE] = "海底三层"
+        map4_1[BOSS_PERIOD] = "2"
+        map4_1[BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis())!!
+        map4_1[STATE] = "0"
+        map4_1[OVER_NUM] = "0"
+        mData.add(map4_1)
+
+        val map4_2 = HashMap<String, String>()
+        map4_2[BOSS_SPACE] = "海底四层"
+        map4_2[BOSS_PERIOD] = "2"
+        map4_2[BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis())!!
+        map4_2[STATE] = "0"
+        map4_2[OVER_NUM] = "0"
+        mData.add(map4_2)
+
+        val map4_3 = HashMap<String, String>()
+        map4_3[BOSS_SPACE] = "海底秘境"
+        map4_3[BOSS_PERIOD] = "2"
+        map4_3[BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis())!!
+        map4_3[STATE] = "0"
+        map4_3[OVER_NUM] = "0"
+        mData.add(map4_3)
+
+        val map4_4 = HashMap<String, String>()
+        map4_4[BOSS_SPACE] = "海底海魔BOSS"
+        map4_4[BOSS_PERIOD] = "2"
+        map4_4[BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis())!!
+        map4_4[STATE] = "0"
+        map4_4[OVER_NUM] = "0"
+        mData.add(map4_4)
+
+        val map1 = HashMap<String, String>()
+        map1[BOSS_SPACE] = "地下一层"
+        map1[BOSS_PERIOD] = "2"
+        map1[BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis())!!
+        map1[STATE] = "0"
+        map1[OVER_NUM] = "0"
+        mData.add(map1)
+
+        val map1_2 = HashMap<String, String>()
+        map1_2[BOSS_SPACE] = "地下二层"
+        map1_2[BOSS_PERIOD] = "2"
+        map1_2[BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis())!!
+        map1_2[STATE] = "0"
+        map1_2[OVER_NUM] = "0"
+        mData.add(map1_2)
+
+        val map1_3 = HashMap<String, String>()
+        map1_3[BOSS_SPACE] = "地下三层"
+        map1_3[BOSS_PERIOD] = "2"
+        map1_3[BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis())!!
+        map1_3[STATE] = "0"
+        map1_3[OVER_NUM] = "0"
+        mData.add(map1_3)
+
+        val map1_4 = HashMap<String, String>()
+        map1_4[BOSS_SPACE] = "地下三层BOSS"
+        map1_4[BOSS_PERIOD] = "2"
+        map1_4[BOSS_TIME] =
+            Utils.longToStringData(System.currentTimeMillis())!!
+        map1_4[STATE] = "0"
+        map1_4[OVER_NUM] = "0"
+        mData.add(map1_4)
 
         val map8 = HashMap<String, String>()
         map8[BOSS_SPACE] = "幽冥三精英"
@@ -463,22 +499,13 @@ class MainActivity : AppCompatActivity() {
         mData.add(map8_2)
 
         val map8_3 = HashMap<String, String>()
-        map8_3[BOSS_SPACE] = "幽冥三BOSS"
+        map8_3[BOSS_SPACE] = "幽冥三层BOSS"
         map8_3[BOSS_PERIOD] = "4"
         map8_3[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
         map8_3[STATE] = "0"
         map8_3[OVER_NUM] = "0"
         mData.add(map8_3)
-
-        val map9 = HashMap<String, String>()
-        map9[BOSS_SPACE] = "圣域"
-        map9[BOSS_PERIOD] = "" + 43f / 60
-        map9[BOSS_TIME] =
-            Utils.longToStringData(System.currentTimeMillis())!!
-        map9[STATE] = "0"
-        map9[OVER_NUM] = "0"
-        mData.add(map9)
 
         val map10 = HashMap<String, String>()
         map10[BOSS_SPACE] = "妖山一层"
@@ -487,24 +514,6 @@ class MainActivity : AppCompatActivity() {
         map10[STATE] = "1"
         map10[OVER_NUM] = "0"
         mData.add(map10)
-
-        val map10_1 = HashMap<String, String>()
-        map10_1[BOSS_SPACE] = "妖山二层"
-        map10_1[BOSS_PERIOD] = "2"
-        map10_1[BOSS_TIME] =
-            Utils.longToStringData(System.currentTimeMillis())!!
-        map10_1[STATE] = "0"
-        map10_1[OVER_NUM] = "0"
-        mData.add(map10_1)
-
-        val map11 = HashMap<String, String>()
-        map11[BOSS_SPACE] = "猪洞三层"
-        map11[BOSS_PERIOD] = "2"
-        map11[BOSS_TIME] =
-            Utils.longToStringData(System.currentTimeMillis())!!
-        map11[STATE] = "0"
-        map11[OVER_NUM] = "0"
-        mData.add(map11)
 
         val map12 = HashMap<String, String>()
         map12[BOSS_SPACE] = "藏金阁花"

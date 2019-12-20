@@ -2,6 +2,7 @@ package com.example.vendor.stgame
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
@@ -38,6 +39,7 @@ class BossAdapter(private var mContext: Context, private var mData: ArrayList<Ha
         }
         viewHolder.tvBossSpace!!.text = mData[position][Constants.BOSS_SPACE]
 
+
         viewHolder.tvBossTime!!.text =  mData[position][Constants.BOSS_TIME]!!
 
         when {
@@ -53,6 +55,22 @@ class BossAdapter(private var mContext: Context, private var mData: ArrayList<Ha
                 viewHolder.tvBossSpace!!.setTextColor(mContext.getColor(R.color.GRAY))
                 viewHolder.tvBossTime!!.setTextColor(mContext.getColor(R.color.GRAY))
             }
+        }
+
+        if( viewHolder.tvBossSpace!!.text.toString().contains("森林")){
+            viewHolder.tvBossSpace!!.setTextColor(mContext.getColor(R.color.green))
+        }
+
+        if( viewHolder.tvBossSpace!!.text.toString().contains("海底")){
+            viewHolder.tvBossSpace!!.setTextColor(mContext.getColor(R.color.blue))
+        }
+
+        if( viewHolder.tvBossSpace!!.text.toString().contains("地下")){
+            viewHolder.tvBossSpace!!.setTextColor(mContext.getColor(R.color.purple))
+        }
+
+        if( viewHolder.tvBossSpace!!.text.toString().contains("BOSS")){
+            viewHolder.tvBossSpace!!.setTextColor(mContext.getColor(R.color.yellow))
         }
 
         viewHolder.btUpdate!!.setOnClickListener {

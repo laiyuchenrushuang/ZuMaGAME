@@ -7,4 +7,8 @@
     <color name="BLACK">#000000</color>
     <color name="GRAY">#999999</color>
     <color name="RED">#DD0404</color>
+    <color name="yellow">#FF9100</color>/>
+    <color name="green">#00E676</color>/>
+    <color name="blue">#00E5FF</color>/>
+    <color name="purple">#651FFF</color>/>
 </resources>

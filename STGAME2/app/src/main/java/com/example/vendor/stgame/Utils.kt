@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.os.Process
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.WindowManager
 
 import java.text.SimpleDateFormat
@@ -174,6 +175,7 @@ class Utils {
 
             val h = time.split(":")[0]  //
             var newTime = "$h:47:00"
+            Log.d("lylog -->>",newTime)
             return newTime
         } //妖1 每47 min
 
