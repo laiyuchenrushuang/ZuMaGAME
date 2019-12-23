@@ -35,7 +35,7 @@
                 android:layout_height="25dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_bg1"
-                android:text="U"/>
+                android:text="更新"/>
 
         <View
                 android:layout_width="10dp"
@@ -47,6 +47,6 @@
                 android:layout_height="25dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_bg2"
-                android:text="D"/>
+                android:text="删除"/>
     </LinearLayout>
 </LinearLayout>
