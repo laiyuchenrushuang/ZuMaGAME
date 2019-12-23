@@ -22,6 +22,7 @@ import com.example.vendor.stgame.Constants.Companion.LIMIT86399
 import com.example.vendor.stgame.Constants.Companion.LIMIT86400
 import com.example.vendor.stgame.Constants.Companion.OVER_NUM
 import com.example.vendor.stgame.Constants.Companion.STATE
+import com.example.vendor.stgame.Constants.Companion.YAO_SHAN
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -47,7 +48,6 @@ class MainActivity : AppCompatActivity() {
         }
         initData()
         mData.sortWith(BossAdapter.mCompare)
-        showLog(GsonUtils.toJson(mData))
         adapter = BossAdapter(this, mData)
         lv_boss_list.adapter = adapter
         bindEvent()
@@ -85,12 +85,11 @@ class MainActivity : AppCompatActivity() {
     inner class Task2 : TimerTask() {
         @Synchronized
         override fun run() {
-            showLog("Task begin " + mData.size)
             try {
                 Thread.sleep(3000)
                 for (index in mData) {
                     if (index[STATE] != "0") {
-                        if ("妖山一层" == index[BOSS_SPACE]) { //定期活动
+                        if (YAO_SHAN == index[BOSS_SPACE]) { //定期活动
                             if (TimeUtils.String2Int(TimeUtils.getCurrentTime()) - TimeUtils.String2Int(index[BOSS_TIME]!!) > 0) {
                                 index[BOSS_TIME] = Utils.getYaoOneBsTime()
                             }
@@ -100,7 +99,7 @@ class MainActivity : AppCompatActivity() {
                             index[STATE] = "2"
                             //已经过期 & 零点的零界分析
                         } else if (TimeUtils.String2Int(index[BOSS_TIME]!!) - TimeUtils.String2Int(TimeUtils.getCurrentTime()) < 0) {
-                            if ("妖山一层" != index[BOSS_SPACE]) { //妖山 只有1和2的状态
+                            if (YAO_SHAN != index[BOSS_SPACE]) { //妖山 只有1和2的状态
                                 index[STATE] = "0"
                                 //23:00:00死亡时间  刷新为2h，01:00:00的情况
                                 if (index[OVER_NUM] != null && !TextUtils.isEmpty(index[OVER_NUM]) && index[OVER_NUM] == "1") {
@@ -108,14 +107,11 @@ class MainActivity : AppCompatActivity() {
                                             TimeUtils.getCurrentTime()
                                         ) in 1 until REMIND_TIME
                                     ) {
-                                        showLog("进来了 - 红")
                                         index[STATE] = "2"
                                     } else {
-                                        showLog("进来了 - 黑")
                                         index[STATE] = "1"
                                     }
                                     if (TimeUtils.getDayOfMonth() != DAY) {
-                                        showLog("进来了 - 重置")
                                         index[OVER_NUM] = "0"
                                     }
                                 }
@@ -134,12 +130,9 @@ class MainActivity : AppCompatActivity() {
                         index[OVER_NUM] = "0" //重置
                         if(index[STATE] == "0"){
                             index[BOSS_TIME] = "00:00:00"
-                            showLog("进来了 $index")
                         }
                     }
                 }
-                showLog("current month = "+TimeUtils.getDayOfMonth())
-                showLog("pre month = "+DAY)
                 runOnUiThread { adapter!!.notifyDataSetChanged() }
             } catch (e: InterruptedException) {
                 e.printStackTrace()
@@ -149,9 +142,9 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun showLog(msg: String) {
-        Log.d("[lylog] -->>", msg)
-    }
+//    private fun showLog(msg: String) {
+//        Log.d("[lylog] -->>", msg)
+//    }
 
     private fun bindEvent() {
         bt_boss_add_data.setOnClickListener {
@@ -235,12 +228,9 @@ class MainActivity : AppCompatActivity() {
      */
     @SuppressLint("SetTextI18n")
     private fun showTimePickerDialog(activity: Activity, themeResId: Int, tv: TextView, calendar: Calendar) {
-        // Calendar c = Calendar.getInstance();
-        // 创建一个TimePickerDialog实例，并把它显示出来
-        // 解释一哈，Activity是context的子类
+
         TimePickerDialog(
             activity, themeResId,
-            // 绑定监听器
             TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
                 var minStr = minute.toString()
                 val secondStr = Utils.longToStringData(System.currentTimeMillis())
@@ -259,7 +249,7 @@ class MainActivity : AppCompatActivity() {
         DAY = TimeUtils.getDayOfMonth()
 
         val map = HashMap<String, String>()
-        map[BOSS_SPACE] = "暗之陵墓"
+        map[BOSS_SPACE] = getString(R.string.a)
         map[BOSS_PERIOD] = "2"
         map[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -269,7 +259,7 @@ class MainActivity : AppCompatActivity() {
 
 
         val map6 = HashMap<String, String>()
-        map6[BOSS_SPACE] = "人鱼海岛"
+        map6[BOSS_SPACE] = getString(R.string.b)
         map6[BOSS_PERIOD] = "1"
         map6[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -278,7 +268,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map6)
 
         val map9 = HashMap<String, String>()
-        map9[BOSS_SPACE] = "圣域领地"
+        map9[BOSS_SPACE] = getString(R.string.c)
         map9[BOSS_PERIOD] = "" + 43f / 60
         map9[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -288,7 +278,7 @@ class MainActivity : AppCompatActivity() {
 
 
         val map2 = HashMap<String, String>()
-        map2[BOSS_SPACE] = "雪域BOSS"
+        map2[BOSS_SPACE] = getString(R.string.d)
         map2[BOSS_PERIOD] = "3"
         map2[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -297,7 +287,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map2)
 
         val map3 = HashMap<String, String>()
-        map3[BOSS_SPACE] = "天魔石窟BOSS"
+        map3[BOSS_SPACE] = getString(R.string.e)
         map3[BOSS_PERIOD] = "2"
         map3[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -307,7 +297,7 @@ class MainActivity : AppCompatActivity() {
 
 
         val map5 = HashMap<String, String>()
-        map5[BOSS_SPACE] = "祖玛大厅BOSS"
+        map5[BOSS_SPACE] = getString(R.string.f)
         map5[BOSS_PERIOD] = "2"
         map5[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -317,7 +307,7 @@ class MainActivity : AppCompatActivity() {
 
 
         val map11 = HashMap<String, String>()
-        map11[BOSS_SPACE] = "猪洞三层BOSS"
+        map11[BOSS_SPACE] = getString(R.string.h)
         map11[BOSS_PERIOD] = "2"
         map11[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -327,7 +317,7 @@ class MainActivity : AppCompatActivity() {
 
 
         val map10_1 = HashMap<String, String>()
-        map10_1[BOSS_SPACE] = "妖山二层BOSS"
+        map10_1[BOSS_SPACE] = getString(R.string.i)
         map10_1[BOSS_PERIOD] = "2"
         map10_1[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -337,7 +327,7 @@ class MainActivity : AppCompatActivity() {
 
 
         val map7_5 = HashMap<String, String>()
-        map7_5[BOSS_SPACE] = "森林精英"
+        map7_5[BOSS_SPACE] = getString(R.string.j)
         map7_5[BOSS_PERIOD] = "0.5"
         map7_5[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -346,7 +336,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map7_5)
 
         val map7 = HashMap<String, String>()
-        map7[BOSS_SPACE] = "森林入口"
+        map7[BOSS_SPACE] = getString(R.string.l)
         map7[BOSS_PERIOD] = "2"
         map7[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -355,7 +345,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map7)
 
         val map7_1 = HashMap<String, String>()
-        map7_1[BOSS_SPACE] = "森林一层"
+        map7_1[BOSS_SPACE] = getString(R.string.m)
         map7_1[BOSS_PERIOD] = "2"
         map7_1[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -364,7 +354,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map7_1)
 
         val map7_2 = HashMap<String, String>()
-        map7_2[BOSS_SPACE] = "森林二层"
+        map7_2[BOSS_SPACE] = getString(R.string.n)
         map7_2[BOSS_PERIOD] = "2"
         map7_2[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -373,7 +363,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map7_2)
 
         val map7_3 = HashMap<String, String>()
-        map7_3[BOSS_SPACE] = "森林三层"
+        map7_3[BOSS_SPACE] = getString(R.string.o)
         map7_3[BOSS_PERIOD] = "2"
         map7_3[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -382,7 +372,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map7_3)
 
         val map7_4 = HashMap<String, String>()
-        map7_4[BOSS_SPACE] = "森林三层BOSS"
+        map7_4[BOSS_SPACE] = getString(R.string.q)
         map7_4[BOSS_PERIOD] = "2"
         map7_4[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -392,7 +382,7 @@ class MainActivity : AppCompatActivity() {
 
 
         val map4 = HashMap<String, String>()
-        map4[BOSS_SPACE] = "海底二层"
+        map4[BOSS_SPACE] = getString(R.string.r)
         map4[BOSS_PERIOD] = "2"
         map4[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -401,7 +391,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map4)
 
         val map4_1 = HashMap<String, String>()
-        map4_1[BOSS_SPACE] = "海底三层"
+        map4_1[BOSS_SPACE] = getString(R.string.s)
         map4_1[BOSS_PERIOD] = "2"
         map4_1[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -410,7 +400,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map4_1)
 
         val map4_2 = HashMap<String, String>()
-        map4_2[BOSS_SPACE] = "海底四层"
+        map4_2[BOSS_SPACE] = getString(R.string.t)
         map4_2[BOSS_PERIOD] = "2"
         map4_2[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -419,7 +409,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map4_2)
 
         val map4_3 = HashMap<String, String>()
-        map4_3[BOSS_SPACE] = "海底秘境"
+        map4_3[BOSS_SPACE] = getString(R.string.u)
         map4_3[BOSS_PERIOD] = "2"
         map4_3[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -428,7 +418,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map4_3)
 
         val map4_4 = HashMap<String, String>()
-        map4_4[BOSS_SPACE] = "海底海魔BOSS"
+        map4_4[BOSS_SPACE] = getString(R.string.w)
         map4_4[BOSS_PERIOD] = "2"
         map4_4[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -437,7 +427,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map4_4)
 
         val map1 = HashMap<String, String>()
-        map1[BOSS_SPACE] = "地下一层"
+        map1[BOSS_SPACE] = getString(R.string.x)
         map1[BOSS_PERIOD] = "2"
         map1[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -446,7 +436,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map1)
 
         val map1_2 = HashMap<String, String>()
-        map1_2[BOSS_SPACE] = "地下二层"
+        map1_2[BOSS_SPACE] = getString(R.string.y)
         map1_2[BOSS_PERIOD] = "2"
         map1_2[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -455,7 +445,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map1_2)
 
         val map1_3 = HashMap<String, String>()
-        map1_3[BOSS_SPACE] = "地下三层"
+        map1_3[BOSS_SPACE] = getString(R.string.z)
         map1_3[BOSS_PERIOD] = "2"
         map1_3[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -464,7 +454,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map1_3)
 
         val map1_4 = HashMap<String, String>()
-        map1_4[BOSS_SPACE] = "地下三层BOSS"
+        map1_4[BOSS_SPACE] = getString(R.string.are)
         map1_4[BOSS_PERIOD] = "2"
         map1_4[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -473,7 +463,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map1_4)
 
         val map8 = HashMap<String, String>()
-        map8[BOSS_SPACE] = "幽冥三精英"
+        map8[BOSS_SPACE] = getString(R.string.you)
         map8[BOSS_PERIOD] = "0.5"
         map8[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -482,7 +472,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map8)
 
         val map8_1 = HashMap<String, String>()
-        map8_1[BOSS_SPACE] = "幽冥一层"
+        map8_1[BOSS_SPACE] = getString(R.string.see)
         map8_1[BOSS_PERIOD] = "2"
         map8_1[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -491,7 +481,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map8_1)
 
         val map8_2 = HashMap<String, String>()
-        map8_2[BOSS_SPACE] = "幽冥二层"
+        map8_2[BOSS_SPACE] = getString(R.string.I)
         map8_2[BOSS_PERIOD] = "2"
         map8_2[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -500,7 +490,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map8_2)
 
         val map8_3 = HashMap<String, String>()
-        map8_3[BOSS_SPACE] = "幽冥三层BOSS"
+        map8_3[BOSS_SPACE] = getString(R.string.can)
         map8_3[BOSS_PERIOD] = "4"
         map8_3[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -509,7 +499,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map8_3)
 
         val map10 = HashMap<String, String>()
-        map10[BOSS_SPACE] = "妖山一层"
+        map10[BOSS_SPACE] = getString(R.string.say)
         map10[BOSS_PERIOD] = "1"
         map10[BOSS_TIME] = Utils.getYaoOneBsTime()
         map10[STATE] = "1"
@@ -517,7 +507,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map10)
 
         val map12 = HashMap<String, String>()
-        map12[BOSS_SPACE] = "藏金阁花"
+        map12[BOSS_SPACE] = getString(R.string.my)
         map12[BOSS_PERIOD] = "" + 20f / 60
         map12[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!
@@ -526,7 +516,7 @@ class MainActivity : AppCompatActivity() {
         mData.add(map12)
 
         val map12_1 = HashMap<String, String>()
-        map12_1[BOSS_SPACE] = "藏金阁BOSS"
+        map12_1[BOSS_SPACE] = getString(R.string.abc)
         map12_1[BOSS_PERIOD] = "1"
         map12_1[BOSS_TIME] =
             Utils.longToStringData(System.currentTimeMillis())!!

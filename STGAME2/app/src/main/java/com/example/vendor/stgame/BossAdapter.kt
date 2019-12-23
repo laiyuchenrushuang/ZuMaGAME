@@ -8,6 +8,11 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.Button
 import android.widget.TextView
+import com.example.vendor.stgame.Constants.Companion.BS
+import com.example.vendor.stgame.Constants.Companion.DI_XIA
+import com.example.vendor.stgame.Constants.Companion.HAI_DI
+import com.example.vendor.stgame.Constants.Companion.SEN_LIN
+import com.example.vendor.stgame.Constants.Companion.YAO_SHAN
 import java.util.*
 
 /**
@@ -72,24 +77,24 @@ class BossAdapter(private var mContext: Context, private var mData: ArrayList<Ha
             }
         }
 
-        if (viewHolder.tvBossSpace!!.text.toString().contains("森林")) {
+        if (viewHolder.tvBossSpace!!.text.toString().contains(SEN_LIN)) {
             viewHolder.tvBossSpace!!.setTextColor(mContext.getColor(R.color.green))
         }
 
-        if (viewHolder.tvBossSpace!!.text.toString().contains("海底")) {
+        if (viewHolder.tvBossSpace!!.text.toString().contains(HAI_DI)) {
             viewHolder.tvBossSpace!!.setTextColor(mContext.getColor(R.color.blue))
         }
 
-        if (viewHolder.tvBossSpace!!.text.toString().contains("地下")) {
+        if (viewHolder.tvBossSpace!!.text.toString().contains(DI_XIA)) {
             viewHolder.tvBossSpace!!.setTextColor(mContext.getColor(R.color.purple))
         }
 
-        if (viewHolder.tvBossSpace!!.text.toString().contains("BOSS")) {
+        if (viewHolder.tvBossSpace!!.text.toString().contains(BS)) {
             viewHolder.tvBossSpace!!.setTextColor(mContext.getColor(R.color.yellow))
         }
 
         viewHolder.btUpdate!!.setOnClickListener {
-            if ("妖山一层" == mData[position][Constants.BOSS_SPACE]) {
+            if (YAO_SHAN == mData[position][Constants.BOSS_SPACE]) {
                 mData[position][Constants.BOSS_TIME] = Utils.getYaoOneBsTime()
             } else {
                 mData[position][Constants.BOSS_TIME] =

@@ -1,3 +1,34 @@
 <resources>
     <string name="app_name">STGAME</string>
+
+    <string name="a">暗之陵墓</string>
+    <string name="b">人鱼海岛</string>
+    <string name="c">圣域领地</string>
+    <string name="d">雪域BOSS</string>
+    <string name="e">天魔石窟BOSS</string>
+    <string name="f">祖玛大厅BOSS</string>
+    <string name="h">猪洞三层BOSS</string>
+    <string name="i">妖山二层BOSS</string>
+    <string name="j">森林精英</string>
+    <string name="l">森林入口</string>
+    <string name="m">森林一层</string>
+    <string name="n">森林二层</string>
+    <string name="o">森林三层</string>
+    <string name="q">森林三层BOSS</string>
+    <string name="r">海底二层</string>
+    <string name="s">海底三层</string>
+    <string name="t">海底四层</string>
+    <string name="u">海底秘境</string>
+    <string name="w">海底海魔BOSS</string>
+    <string name="x">地下一层</string>
+    <string name="y">地下二层</string>
+    <string name="z">地下三层</string>
+    <string name="are">地下三层BOSS</string>
+    <string name="you">幽冥三精英</string>
+    <string name="see">幽冥一层</string>
+    <string name="I">幽冥二层</string>
+    <string name="can">幽冥三层BOSS</string>
+    <string name="my">藏金阁花</string>
+    <string name="abc">藏金阁BOSS</string>
+    <string name="say">妖山一层</string>
 </resources>
