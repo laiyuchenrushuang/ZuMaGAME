@@ -18,11 +18,20 @@ class BossAdapter(private var mContext: Context, private var mData: ArrayList<Ha
     companion object {
         val mCompare: Comparator<in HashMap<String, String>> = Comparator { o1, o2 ->
             if (o2[Constants.STATE] == o1[Constants.STATE]) {
-                if (o2[Constants.OVER_NUM] == o1[Constants.OVER_NUM]) {
-                    TimeUtils.String2Int(o1[Constants.BOSS_TIME]!!) - TimeUtils.String2Int(o2[Constants.BOSS_TIME]!!) //升序
+                if (o2[Constants.STATE] == "0") {
+                    if (o2[Constants.OVER_NUM] == o1[Constants.OVER_NUM]) {
+                        TimeUtils.String2Int(o2[Constants.BOSS_TIME]!!) - TimeUtils.String2Int(o1[Constants.BOSS_TIME]!!) //倒叙
+                    } else {
+                        o1[Constants.OVER_NUM]!!.toInt().compareTo(o2[Constants.OVER_NUM]!!.toInt())
+                    }
                 } else {
-                    o1[Constants.OVER_NUM]!!.toInt().compareTo(o2[Constants.OVER_NUM]!!.toInt())
+                    if (o2[Constants.OVER_NUM] == o1[Constants.OVER_NUM]) {
+                        TimeUtils.String2Int(o1[Constants.BOSS_TIME]!!) - TimeUtils.String2Int(o2[Constants.BOSS_TIME]!!) //升序
+                    } else {
+                        o1[Constants.OVER_NUM]!!.toInt().compareTo(o2[Constants.OVER_NUM]!!.toInt())
+                    }
                 }
+
             } else {
                 o2[Constants.STATE]!!.toInt() - o1[Constants.STATE]!!.toInt()
             }
@@ -39,6 +48,7 @@ class BossAdapter(private var mContext: Context, private var mData: ArrayList<Ha
             viewHolder = ViewHolder(view)
             view.tag = viewHolder
         } else {
+
             view = convertView
             viewHolder = view.tag as ViewHolder
         }

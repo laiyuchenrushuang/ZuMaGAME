@@ -93,17 +93,14 @@ class MainActivity : AppCompatActivity() {
                         if ("妖山一层" == index[BOSS_SPACE]) { //定期活动
                             if (TimeUtils.String2Int(TimeUtils.getCurrentTime()) - TimeUtils.String2Int(index[BOSS_TIME]!!) > 0) {
                                 index[BOSS_TIME] = Utils.getYaoOneBsTime()
-                                runOnUiThread { adapter!!.notifyDataSetChanged() }
                             }
                         }
                         //10分钟内
                         if (TimeUtils.String2Int(index[BOSS_TIME]!!) - TimeUtils.String2Int(TimeUtils.getCurrentTime()) in 1 until REMIND_TIME) {
                             index[STATE] = "2"
-                            runOnUiThread { adapter!!.notifyDataSetChanged() }
                             //已经过期 & 零点的零界分析
                         } else if (TimeUtils.String2Int(index[BOSS_TIME]!!) - TimeUtils.String2Int(TimeUtils.getCurrentTime()) < 0) {
                             if ("妖山一层" != index[BOSS_SPACE]) { //妖山 只有1和2的状态
-
                                 index[STATE] = "0"
                                 //23:00:00死亡时间  刷新为2h，01:00:00的情况
                                 if (index[OVER_NUM] != null && !TextUtils.isEmpty(index[OVER_NUM]) && index[OVER_NUM] == "1") {
@@ -122,16 +119,12 @@ class MainActivity : AppCompatActivity() {
                                         index[OVER_NUM] = "0"
                                     }
                                 }
-                            }
-                            runOnUiThread {
-                                adapter!!.notifyDataSetChanged()
+                            }else{
+                                index[STATE] = "1" //妖山活动
                             }
                             //大于10分钟
                         } else {
                             index[STATE] = "1"
-                            runOnUiThread {
-                                adapter!!.notifyDataSetChanged()
-                            }
                         }
                     }
                 }
@@ -139,8 +132,15 @@ class MainActivity : AppCompatActivity() {
                     DAY = TimeUtils.getDayOfMonth()
                     for (index in mData) {
                         index[OVER_NUM] = "0" //重置
+                        if(index[STATE] == "0"){
+                            index[BOSS_TIME] = "00:00:00"
+                            showLog("进来了 $index")
+                        }
                     }
                 }
+                showLog("current month = "+TimeUtils.getDayOfMonth())
+                showLog("pre month = "+DAY)
+                runOnUiThread { adapter!!.notifyDataSetChanged() }
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
