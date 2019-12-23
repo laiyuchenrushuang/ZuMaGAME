@@ -32,11 +32,11 @@ import kotlin.collections.HashMap
 class MainActivity : AppCompatActivity() {
 
     var adapter: BossAdapter? = null
-    var mData = ArrayList<HashMap<String, String>>()
+    var mData =  ArrayList<HashMap<String, String>>()
 
     var calendar = Calendar.getInstance(Locale.CHINA)
     val REMIND_TIME = 10 * 60
-    var DAY :Int?=null
+    var DAY: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,8 +81,9 @@ class MainActivity : AppCompatActivity() {
         pool.scheduleWithFixedDelay(t2, 0, 2, TimeUnit.SECONDS)
     }
 
-    inner class Task2 : TimerTask() {
 
+    inner class Task2 : TimerTask() {
+        @Synchronized
         override fun run() {
             showLog("Task begin " + mData.size)
             try {
@@ -95,7 +96,6 @@ class MainActivity : AppCompatActivity() {
                                 runOnUiThread { adapter!!.notifyDataSetChanged() }
                             }
                         }
-
                         //10分钟内
                         if (TimeUtils.String2Int(index[BOSS_TIME]!!) - TimeUtils.String2Int(TimeUtils.getCurrentTime()) in 1 until REMIND_TIME) {
                             index[STATE] = "2"
@@ -107,14 +107,17 @@ class MainActivity : AppCompatActivity() {
                                 index[STATE] = "0"
                                 //23:00:00死亡时间  刷新为2h，01:00:00的情况
                                 if (index[OVER_NUM] != null && !TextUtils.isEmpty(index[OVER_NUM]) && index[OVER_NUM] == "1") {
-                                    if (TimeUtils.String2Int(index[BOSS_TIME]!!) + LIMIT86400 - TimeUtils.String2Int(TimeUtils.getCurrentTime()) in 1 until REMIND_TIME) {
+                                    if (TimeUtils.String2Int(index[BOSS_TIME]!!) + LIMIT86400 - TimeUtils.String2Int(
+                                            TimeUtils.getCurrentTime()
+                                        ) in 1 until REMIND_TIME
+                                    ) {
                                         showLog("进来了 - 红")
                                         index[STATE] = "2"
-                                    }else{
+                                    } else {
                                         showLog("进来了 - 黑")
                                         index[STATE] = "1"
                                     }
-                                    if(TimeUtils.getDayOfMonth() != DAY){
+                                    if (TimeUtils.getDayOfMonth() != DAY) {
                                         showLog("进来了 - 重置")
                                         index[OVER_NUM] = "0"
                                     }
@@ -132,7 +135,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
-                if(TimeUtils.getDayOfMonth() != DAY){
+                if (TimeUtils.getDayOfMonth() != DAY) {
                     DAY = TimeUtils.getDayOfMonth()
                     for (index in mData) {
                         index[OVER_NUM] = "0" //重置
@@ -284,7 +287,6 @@ class MainActivity : AppCompatActivity() {
         mData.add(map9)
 
 
-
         val map2 = HashMap<String, String>()
         map2[BOSS_SPACE] = "雪域BOSS"
         map2[BOSS_PERIOD] = "3"
@@ -332,7 +334,6 @@ class MainActivity : AppCompatActivity() {
         map10_1[STATE] = "0"
         map10_1[OVER_NUM] = "0"
         mData.add(map10_1)
-
 
 
         val map7_5 = HashMap<String, String>()

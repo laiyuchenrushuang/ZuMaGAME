@@ -12,12 +12,17 @@ import java.util.*
 
 /**
  */
-class BossAdapter(private var mContext: Context, private var mData: ArrayList<HashMap<String, String>>) : BaseAdapter() {
+class BossAdapter(private var mContext: Context, private var mData: ArrayList<HashMap<String, String>>) :
+    BaseAdapter() {
 
     companion object {
         val mCompare: Comparator<in HashMap<String, String>> = Comparator { o1, o2 ->
             if (o2[Constants.STATE] == o1[Constants.STATE]) {
-                TimeUtils.String2Int(o1[Constants.BOSS_TIME]!!)  - TimeUtils.String2Int(o2[Constants.BOSS_TIME]!!)
+                if (o2[Constants.OVER_NUM] == o1[Constants.OVER_NUM]) {
+                    TimeUtils.String2Int(o1[Constants.BOSS_TIME]!!) - TimeUtils.String2Int(o2[Constants.BOSS_TIME]!!) //升序
+                } else {
+                    o1[Constants.OVER_NUM]!!.toInt().compareTo(o2[Constants.OVER_NUM]!!.toInt())
+                }
             } else {
                 o2[Constants.STATE]!!.toInt() - o1[Constants.STATE]!!.toInt()
             }
@@ -40,7 +45,7 @@ class BossAdapter(private var mContext: Context, private var mData: ArrayList<Ha
         viewHolder.tvBossSpace!!.text = mData[position][Constants.BOSS_SPACE]
 
 
-        viewHolder.tvBossTime!!.text =  mData[position][Constants.BOSS_TIME]!!
+        viewHolder.tvBossTime!!.text = mData[position][Constants.BOSS_TIME]!!
 
         when {
             "1" == mData[position][Constants.STATE] -> {
@@ -57,30 +62,31 @@ class BossAdapter(private var mContext: Context, private var mData: ArrayList<Ha
             }
         }
 
-        if( viewHolder.tvBossSpace!!.text.toString().contains("森林")){
+        if (viewHolder.tvBossSpace!!.text.toString().contains("森林")) {
             viewHolder.tvBossSpace!!.setTextColor(mContext.getColor(R.color.green))
         }
 
-        if( viewHolder.tvBossSpace!!.text.toString().contains("海底")){
+        if (viewHolder.tvBossSpace!!.text.toString().contains("海底")) {
             viewHolder.tvBossSpace!!.setTextColor(mContext.getColor(R.color.blue))
         }
 
-        if( viewHolder.tvBossSpace!!.text.toString().contains("地下")){
+        if (viewHolder.tvBossSpace!!.text.toString().contains("地下")) {
             viewHolder.tvBossSpace!!.setTextColor(mContext.getColor(R.color.purple))
         }
 
-        if( viewHolder.tvBossSpace!!.text.toString().contains("BOSS")){
+        if (viewHolder.tvBossSpace!!.text.toString().contains("BOSS")) {
             viewHolder.tvBossSpace!!.setTextColor(mContext.getColor(R.color.yellow))
         }
 
         viewHolder.btUpdate!!.setOnClickListener {
             if ("妖山一层" == mData[position][Constants.BOSS_SPACE]) {
-                mData[position][Constants.BOSS_TIME] =Utils.getYaoOneBsTime()
+                mData[position][Constants.BOSS_TIME] = Utils.getYaoOneBsTime()
             } else {
-                mData[position][Constants.BOSS_TIME] = Utils.getBsTime(TimeUtils.getCurrentTime(),mData[position][Constants.BOSS_PERIOD]!!.toFloat())
-                if(TimeUtils.String2Int(TimeUtils.getCurrentTime()) + mData[position][Constants.BOSS_PERIOD]!!.toFloat() * 60 * 60 > Constants.LIMIT86399){
+                mData[position][Constants.BOSS_TIME] =
+                    Utils.getBsTime(TimeUtils.getCurrentTime(), mData[position][Constants.BOSS_PERIOD]!!.toFloat())
+                if (TimeUtils.String2Int(TimeUtils.getCurrentTime()) + mData[position][Constants.BOSS_PERIOD]!!.toFloat() * 60 * 60 > Constants.LIMIT86399) {
                     mData[position][Constants.OVER_NUM] = "1"
-                }else{
+                } else {
                     mData[position][Constants.OVER_NUM] = "0"
                 }
 
