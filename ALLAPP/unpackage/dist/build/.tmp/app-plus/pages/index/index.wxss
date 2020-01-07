@@ -1,0 +1,15 @@
+
+.content {
+		text-align: center;
+		height: 100rpx;
+}
+.logo{
+        height: 100rpx;
+        width: 100rpx;
+        margin-top: 100rpx;
+}
+.title {
+		font-size: 100rpx;
+		color: #8f8f94;
+}
+

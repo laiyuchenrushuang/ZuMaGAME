@@ -1,0 +1,2 @@
+setCssToHead([".",[1],"content { text-align: center; height: ",[0,100],"; }\n.",[1],"logo{ height: ",[0,100],"; width: ",[0,100],"; margin-top: ",[0,100],"; }\n.",[1],"title { font-size: ",[0,100],"; color: #8f8f94; }\n",],undefined,{path:"./pages/index/index.wxss"})();
+document.dispatchEvent(new CustomEvent("generateFuncReady", { detail: { generateFunc: $gwx('./pages/index/index.wxml') } }));
