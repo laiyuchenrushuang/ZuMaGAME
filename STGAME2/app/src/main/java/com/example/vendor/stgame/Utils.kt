@@ -5,7 +5,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.os.Process
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.WindowManager
 
 import java.text.SimpleDateFormat
@@ -133,9 +132,8 @@ class Utils {
         }
 
         //做一个时间限定
-        fun checkEnableUse(activity: Activity) {
+        fun checkEnableUse(activity: Activity, currentTime: Long) {
             var limitTime = SharedPreferencesUnitls.getParam(activity, Constants.ENABLE)
-            var currentTime = System.currentTimeMillis()
             if (currentTime - date2Stamp(limitTime) > 0) {
                 val builder = AlertDialog.Builder(activity)
                 builder.setMessage("当前app使用期限已到\n\n截止时间为:$limitTime")
@@ -148,6 +146,7 @@ class Utils {
                     Process.killProcess(Process.myPid())
                 }
                 var dialog = builder.create()
+                dialog.setCancelable(false)
                 dialog.setCanceledOnTouchOutside(false)
                 dialog.show()
 

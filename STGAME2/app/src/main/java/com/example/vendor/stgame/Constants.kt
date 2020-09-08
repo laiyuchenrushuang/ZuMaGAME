@@ -17,6 +17,7 @@ class Constants {
         var STATE = "state"  // 0 默认 1 更新的 2(权重最高)
         var OVER_NUM = "over_num" // 0是没超过12点 1 是超过12点
         var ENABLE = "LYC"
+        var TIME = "TIME"
 
         var YAO_SHAN = "妖山一层"
         var SEN_LIN = "森林"

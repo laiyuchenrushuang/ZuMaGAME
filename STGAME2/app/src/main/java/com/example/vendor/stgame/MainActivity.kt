@@ -8,10 +8,10 @@ import android.support.v7.app.AlertDialog
 import android.app.TimePickerDialog
 import android.app.Activity
 import android.os.Build
+import android.os.Looper
 import android.support.annotation.RequiresApi
 import android.support.v4.view.ViewCompat
 import android.text.TextUtils
-import android.util.Log
 import android.view.*
 import android.widget.*
 import com.example.vendor.stgame.Constants.Companion.BOSS_PERIOD
@@ -23,17 +23,19 @@ import com.example.vendor.stgame.Constants.Companion.LIMIT86400
 import com.example.vendor.stgame.Constants.Companion.OVER_NUM
 import com.example.vendor.stgame.Constants.Companion.STATE
 import com.example.vendor.stgame.Constants.Companion.YAO_SHAN
+import java.net.URL
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
+import kotlin.concurrent.thread
 
 
 class MainActivity : AppCompatActivity() {
 
     var adapter: BossAdapter? = null
-    var mData =  ArrayList<HashMap<String, String>>()
+    var mData = ArrayList<HashMap<String, String>>()
 
     var calendar = Calendar.getInstance(Locale.CHINA)
     val REMIND_TIME = 10 * 60
@@ -42,7 +44,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        Utils.checkEnableUse(this)
+
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
             setStatusBarColor(resources.getColor(R.color.greenEyeColor))
         }
@@ -52,7 +54,18 @@ class MainActivity : AppCompatActivity() {
         lv_boss_list.adapter = adapter
         bindEvent()
         openTask()
+
+        if (System.currentTimeMillis() > Utils.date2Stamp(SharedPreferencesUnitls.getTime(this, Constants.TIME))) {
+            SharedPreferencesUnitls.setTime(this, Constants.TIME, Utils.long2StringData(System.currentTimeMillis())!!)
+        } else {
+            showToast("时间不是最新时间，程序退出")
+            finish()
+        }
+
+        Utils.checkEnableUse(this, Utils.date2Stamp(SharedPreferencesUnitls.getParam(this, Constants.TIME)))
+        Utils.checkEnableUse(this, System.currentTimeMillis())
     }
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private fun setStatusBarColor(statusColor: Int) {
@@ -115,7 +128,7 @@ class MainActivity : AppCompatActivity() {
                                         index[OVER_NUM] = "0"
                                     }
                                 }
-                            }else{
+                            } else {
                                 index[STATE] = "1" //妖山活动
                             }
                             //大于10分钟
@@ -128,7 +141,7 @@ class MainActivity : AppCompatActivity() {
                     DAY = TimeUtils.getDayOfMonth()
                     for (index in mData) {
                         index[OVER_NUM] = "0" //重置
-                        if(index[STATE] == "0"){
+                        if (index[STATE] == "0") {
                             index[BOSS_TIME] = "00:00:00"
                         }
                     }
@@ -523,5 +536,16 @@ class MainActivity : AppCompatActivity() {
         map12_1[STATE] = "0"
         map12_1[OVER_NUM] = "0"
         mData.add(map12_1)
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (KeyEvent.KEYCODE_BACK == event!!.action) {
+            finish()
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
+    fun print(obj: Any?) {
+        println("[lylog] $obj")
     }
 }
