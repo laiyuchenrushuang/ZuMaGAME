@@ -9,7 +9,7 @@
 
 
 
-private void getNetTime1() {
+        private void getNetTime1() {
         URL url = null;//取得资源对象
         try {
             url = new URL("http://www.baidu.com");
